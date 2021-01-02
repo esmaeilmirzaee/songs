@@ -43,3 +43,47 @@ export default combineReducers({
   selectedSong: selectedSongReducer,
 });
 ```
+
+12. in `src/index.jsx` file import `Provider`, `reducers` and `createStore`. Change the file as follows
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import reducers from './reducers';
+import App from './components/App';
+
+ReactDOM.render(
+  <Provider store={createStore(reducers)}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+13. in the file where you look to receive states, import `connect` component. Do as follow
+
+```javascript
+import { connect } from 'react-redux';
+
+function mapsStateToProps(state) {
+  return { songs: state.songs };
+}
+export default connect(mapsStateToProps)(SongList);
+```
+
+now _songs_ are accessible through `props.songs`. It is possible to map through the _songs_ and show the required info according to each song's properties.
+
+```javascript
+renderedList() {
+  return this.props.songs.map(function toRenderSong(song) {
+    return (
+      <SongCard song={somg} />
+    )
+  })
+}
+```
+
+14. response to click on select button
