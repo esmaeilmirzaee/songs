@@ -80,10 +80,95 @@ now _songs_ are accessible through `props.songs`. It is possible to map through 
 renderedList() {
   return this.props.songs.map(function toRenderSong(song) {
     return (
-      <SongCard song={somg} />
-    )
-  })
+      <SongCard song={song} />
+    );
+  });
 }
 ```
 
-14. response to click on select button
+14. response to click on select button; import `selectSong` and do as follow
+
+```javascript
+import { selectSong } from '../actions';
+
+class SongList extends React.Component {
+  renderedList() {
+    // using named function would be end up `undefined` error so I alter it with ES6 arrow function
+    return this.props.songs.map((song) => {
+      return (
+        <div className='ui row' key={song.title}>
+          <div className='column eight wide'>
+            <SongItem song={song} selectSong={this.props.selectSong} />
+          </div>
+        </div>
+      );
+    });
+  }
+  render() {
+    return (
+      <div className='ui container'>
+        <h1>SongList</h1>
+        <div className='ui column eight wide'>{this.renderedList()}</div>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps(state) {
+  return { songs: state.songs };
+}
+
+export default connect(mapStateToProps, { selectSong })(SongList);
+```
+
+14.1. in `SongItem` get the props and fill in the blanks
+
+```javascript
+import React from 'react';
+
+const SongItem = function SongItem(props) {
+  return (
+    <div className='ui item'>
+      <div className='ui floated right'>
+        <button
+          className='ui button'
+          onClick={() => props.selectSong(props.song)}
+        >
+          Select
+        </button>
+      </div>
+      <div className='ui title'>{props.song.title}</div>
+    </div>
+  );
+};
+
+export default SongItem;
+```
+
+14.2. create a new file in order to show details
+
+```javascript
+import React from 'react';
+import { connect } from 'react-redux';
+
+const SongDetails = function SongDetails({ song }) {
+  if (!song) {
+    return <h1>Please select a song</h1>;
+  }
+  return (
+    <div className='ui container'>
+      <div className='ui icon'>
+        <i className='music icon 4x'></i>
+      </div>
+      <div className='title'>{song.title}</div>
+      <div className='subtitle'>{song.duration}</div>
+    </div>
+  );
+};
+
+function mapStateToProps(state) {
+  return { song: state.selectedSong };
+}
+
+export default connect(mapStateToProps)(SongDetails);
+```
